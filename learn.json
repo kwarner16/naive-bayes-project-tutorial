@@ -1,6 +1,9 @@
 {
 	"slug" : "naive-bayes-project-tutorial",
-	"title" : "Naive Bayes Project Tutorial",
+	"title" : {
+		"us":"Naive Bayes Project Tutorial",
+		"es":"Tutorial del proyecto Naive Bayes"
+	},
 	"preview": "https://github.com/4GeeksAcademy/naive-bayes-project-tutorial/blob/main/preview.png?raw=true",
 	"solution": "https://github.com/4GeeksAcademy/naive-bayes-project-tutorial/blob/main/solution.ipynb",
 	"status": "published",
@@ -12,5 +15,11 @@
 	"template_url": "https://github.com/4GeeksAcademy/machine-learning-python-template",
     "projectType": "project",
 	"autoPlay": "false",
-	"description" : "Use Naive Bayes algorithm to classify apps reviews as good or bad."
+	"description" : {
+		"us":"Use the Naive Bayes algorithm to classify app reviews as good or bad based on their content. Preprocess the review data, train a Naive Bayes model, and optimize its performance. This project helps you understand text classification and sentiment analysis techniques for machine learning.",
+		"es":"Usa el algoritmo Naive Bayes para clasificar las reseñas de aplicaciones como buenas o malas según su contenido. Preprocesa los datos de las reseñas, entrena un modelo Naive Bayes y optimiza su rendimiento. Este proyecto te ayuda a entender las técnicas de clasificación de texto y análisis de sentimiento en machine learning."
+	},
+	"telemetry": {
+	    	"batch": "https://breathecode.herokuapp.com/v1/assignment/me/telemetry?asset_id=431"
+	  }
 }
