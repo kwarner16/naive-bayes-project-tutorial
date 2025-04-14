@@ -42,29 +42,66 @@ O descargarlo y añadirlo a mano en tu repositorio. En este conjunto de datos en
 
 - `package_name`. Nombre de la aplicación móvil (categórico)
 - `review`. Comentario sobre la aplicación móvil (categórico)
-- `polarity`. Variable de clase (0 o 1), siendo 0 un comentario negativo y 1, positivo (numérico)
+- `polarity`. Variable de clase (0 o 1), siendo 0 un comentario negativo y 1, positivo (categórico numérico)
 
-#### Paso 2: Estudio de variables y su contenido
 
-En este caso, tenemos solo 3 variables: 2 predictoras y una etiqueta dicotómica. De las dos predictoras, realmente solo nos interesa la parte del comentario, ya que el hecho de clasificar un comentario en positivo o negativo dependerá de su contenido, no de la aplicación de la que se haya escrito. Por lo tanto, la variable `package_name` habría que eliminarla.
+#### Paso 2: Procesamiento del texto
 
-Cuando trabajamos con textos como en este caso, no tiene sentido hacer un EDA, el proceso es diferente, ya que la única variable que nos interesa es la que contiene el texto. En otros casos en los que el texto formase parte de un conjunto complejo con otras variables predictoras numéricas y el objetivo de predicción sea distinto, entonces tiene sentido aplicar un EDA.
+### ¿Por qué no podemos usar texto plano en Machine Learning?
 
-Sin embargo, no podemos trabajar con texto plano, antes hay que procesarlo. Este proceso consta de varios pasos:
+Los algoritmos de Machine Learning no pueden trabajar directamente con texto: **necesitan números**. Por eso, debemos convertir los comentarios (reviews) en representaciones numéricas. Este proceso se llama **vectorización del texto**.
 
-1. Eliminar espacios y convertir a minúsculas el texto:
-```py
-df["column"] = df["column"].str.strip().str.lower()
+Una de las técnicas más sencillas y efectivas para esto es el **modelo de bolsa de palabras (Bag of Words)**, que se implementa en Python con CountVectorizer.
+
+#### ¿Qué hace `CountVectorizer`?
+
+`CountVectorizer` transforma cada comentario en un vector que indica **cuántas veces aparece cada palabra**. Por ejemplo:
+
+```text
+Comentario original: "Me encanta esta app"
+Vector resultante:    [1, 1, 1]  ← (una vez “me”, una vez “encanta”, una vez “esta”)
 ```
-2. Dividir el conjunto de datos en train y test: `X_train`, `X_test`, `y_train`, `y_test`
-3. Transformar el texto en una matriz de recuento de palabras. Esta es una forma de obtener características numéricas a partir del texto. Para ello, utilizamos el conjunto de train para entrenar el transformador y la aplicamos en test:
-```py
-vec_model = CountVectorizer(stop_words = "english")
-X_train = vec_model.fit_transform(X_train).toarray()
-X_test = vec_model.transform(X_test).toarray()
-```
+
+Además, permite eliminar las **palabras vacías** (como “de”, “la”, “y”) usando el parámetro `stop_words="english"`.
+
+Ahora sí, los pasos concretos para preparar los datos son los siguientes:
+
+- Eliminar espacios y convertir todo a minúsculas:
+
+    ```python
+    df["review"] = df["review"].str.strip().str.lower()
+    ```
+
+- Eliminar la columna que no aporta información predictiva:
+
+    ```python
+    df = df.drop("package_name", axis=1)
+    ```
+
+- Dividir los datos en entrenamiento y prueba:
+
+    ```python
+    from sklearn.model_selection import train_test_split
+
+    X = df["review"]
+    y = df["polarity"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    ```
+
+- Vectorizar el texto usando CountVectorizer:
+
+    ```python
+    from sklearn.feature_extraction.text import CountVectorizer
+
+    vectorizer = CountVectorizer(stop_words="english")
+
+    X_train_vec = vectorizer.fit_transform(X_train).toarray()
+    X_test_vec = vectorizer.transform(X_test).toarray()
+    ```
 
 Una vez hayamos terminado tendremos listas las predictoras para entrenar el modelo.
+
 
 #### Paso 3: Construye un naive bayes
 
@@ -83,3 +120,38 @@ Almacena el modelo en la carpeta correspondiente.
 ¿Qué otros modelos de los que hemos estudiado podrías utilizar para intentar superar los resultados de un Naive Bayes? Arguméntalo y entrena el modelo.
 
 > Nota: También incorporamos muestras de solución en `./solution.ipynb` que te sugerimos honestamente que solo uses si estás atascado por más de 30 minutos o si ya has terminado y quieres compararlo con tu enfoque.
+
+
+## 🚀 Haz visible tu trabajo
+
+Ahora es tu turno de comunicar en tu **LinkedIn** lo que tu modelo aprendió del lenguaje humano.
+
+### ¿Qué compartir?
+
+Publicá una reflexión o insight poderoso que surja del análisis de reseñas. Puede ser sobre cómo la gente se expresa al escribir críticas, qué palabras predicen con mayor fuerza una opinión negativa, o cómo tu modelo logra entender el “sentimiento” detrás de las palabras.
+
+También podés acompañarlo con una visualización, como las palabras más comunes en críticas negativas, o ejemplos donde tu modelo acertó (o falló) sorprendentemente.
+
+---
+
+### ✨ Ejemplos posteables
+
+> **¿Tu IA detecta frustración?**  
+> Entrené un modelo de clasificación con Naive Bayes para detectar sentimientos en reseñas de apps.  
+> Descubrí que palabras como *“bug”*, *“crashes”*, *“ads”* aparecen de forma desproporcionada en comentarios negativos.  
+> Lo increíble: el modelo acertó con más del 90% de precisión sin haber “entendido” ni una sola palabra.  
+> Solo estadística pura. 🤖💬
+
+
+
+> **La emoción también se entrena**  
+> ¿Puede una IA saber si estás feliz con una app?  
+> Después de entrenar un clasificador con más de 50.000 reseñas, descubrí que palabras como *“love”*, *“helpful”* y *“easy”* son predictores clave de reseñas positivas.  
+> Con solo unas líneas de texto, el modelo sabe si sos fan o hater.  
+> #MachineLearning #NLP
+
+
+## 🚛 Cómo entregar este proyecto
+
+Una vez que hayas terminado de resolver el caso práctico, asegúrate de confirmar tus cambios, haz push a tu repositorio y ve a 4Geeks.com para subir el enlace del repositorio.
+
